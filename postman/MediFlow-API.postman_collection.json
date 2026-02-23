@@ -1,0 +1,317 @@
+{
+  "info": {
+    "name": "MediFlow API",
+    "description": "All MediFlow backend APIs. Set {{baseUrl}} and {{accessToken}} in collection variables (or environment).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3001" },
+    { "key": "accessToken", "value": "" },
+    { "key": "voiceApiKey", "value": "" },
+    { "key": "twilioToNumber", "value": "+15550001111" },
+    { "key": "appointmentId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth / Onboarding",
+      "item": [
+        {
+          "name": "Get me (profile + hospital)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/me"
+          }
+        },
+        {
+          "name": "Onboarding (create hospital + profile)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospitalName\": \"City General Hospital\",\n  \"email\": \"contact@hospital.com\",\n  \"phone\": \"+1 555-0000\",\n  \"address\": \"123 Main St\",\n  \"fullName\": \"Dr. Admin\"\n}"
+            },
+            "url": "{{baseUrl}}/api/onboarding"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Doctors",
+      "item": [
+        {
+          "name": "List doctors",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/doctors"
+          }
+        },
+        {
+          "name": "Create doctor",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dr. Jane Smith\",\n  \"specialization\": \"Cardiology\",\n  \"email\": \"jane.smith@hospital.com\"\n}"
+            },
+            "url": "{{baseUrl}}/api/doctors"
+          }
+        },
+        {
+          "name": "Delete doctor",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/doctors/:id",
+            "variable": [{ "key": "id", "value": "doctor-uuid-here" }]
+          }
+        },
+        {
+          "name": "List doctor availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/doctors/:id/availability",
+            "variable": [{ "key": "id", "value": "doctor-uuid-here" }]
+          }
+        },
+        {
+          "name": "Add doctor availability slot",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"day_of_week\": 1,\n  \"start_time\": \"09:00\",\n  \"end_time\": \"17:00\",\n  \"slot_duration_minutes\": 15\n}"
+            },
+            "url": "{{baseUrl}}/api/doctors/:id/availability",
+            "variable": [{ "key": "id", "value": "doctor-uuid-here" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Doctor availability (delete)",
+      "item": [
+        {
+          "name": "Delete availability slot",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/doctor-availability/:id",
+            "variable": [{ "key": "id", "value": "availability-slot-uuid-here" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patients",
+      "item": [
+        {
+          "name": "List patients",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/patients"
+          }
+        },
+        {
+          "name": "Create patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"phone\": \"+1 555-1234\",\n  \"email\": \"john@example.com\"\n}"
+            },
+            "url": "{{baseUrl}}/api/patients"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointments",
+      "item": [
+        {
+          "name": "List appointments (all)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/appointments"
+          }
+        },
+        {
+          "name": "List appointments by date",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/appointments?date=2026-02-21",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "appointments"],
+              "query": [{ "key": "date", "value": "2026-02-21" }]
+            }
+          }
+        },
+        {
+          "name": "Create appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patient_id\": \"patient-uuid-here\",\n  \"doctor_id\": \"doctor-uuid-here\",\n  \"date\": \"2026-02-21\",\n  \"time\": \"09:00\",\n  \"status\": \"pending\",\n  \"notes\": \"Optional note\"\n}"
+            },
+            "url": "{{baseUrl}}/api/appointments"
+          }
+        },
+        {
+          "name": "Delete appointment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/appointments/:id",
+            "variable": [{ "key": "id", "value": "appointment-uuid-here" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Voice API (Bolna)",
+      "item": [
+        {
+          "name": "Voice – List doctors",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-key", "value": "{{voiceApiKey}}" },
+              { "key": "x-twilio-to-number", "value": "{{twilioToNumber}}" }
+            ],
+            "url": "{{baseUrl}}/api/voice/doctors"
+          }
+        },
+        {
+          "name": "Voice – Get available slots",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-key", "value": "{{voiceApiKey}}" },
+              { "key": "x-twilio-to-number", "value": "{{twilioToNumber}}" }
+            ],
+            "url": "{{baseUrl}}/api/voice/slots?doctor_id=&from_date="
+          }
+        },
+        {
+          "name": "Voice – Book appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-key", "value": "{{voiceApiKey}}" },
+              { "key": "x-twilio-to-number", "value": "{{twilioToNumber}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"doctor_id\": \"\",\n  \"date\": \"2026-02-21\",\n  \"time\": \"09:00\",\n  \"patient_phone\": \"+15551234567\",\n  \"patient_name\": \"John Doe\"\n}"
+            },
+            "url": "{{baseUrl}}/api/voice/appointments"
+          }
+        },
+        {
+          "name": "Voice – Find appointment (by name + doctor + date)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-key", "value": "{{voiceApiKey}}" },
+              { "key": "x-twilio-to-number", "value": "{{twilioToNumber}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patient_name\": \"John Doe\",\n  \"doctor_name\": \"Smith\",\n  \"date\": \"2026-02-21\"\n}"
+            },
+            "url": "{{baseUrl}}/api/voice/appointments/find"
+          }
+        },
+        {
+          "name": "Voice – List appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-api-key", "value": "{{voiceApiKey}}" },
+              { "key": "x-twilio-to-number", "value": "{{twilioToNumber}}" },
+              { "key": "x-twilio-from-number", "value": "{{twilioToNumber}}" }
+            ],
+            "url": "{{baseUrl}}/api/voice/appointments"
+          }
+        },
+        {
+          "name": "Voice – Cancel appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-key", "value": "{{voiceApiKey}}" },
+              { "key": "x-twilio-to-number", "value": "{{twilioToNumber}}" },
+              { "key": "x-twilio-from-number", "value": "{{twilioToNumber}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": "{{baseUrl}}/api/voice/appointments/{{appointmentId}}/cancel"
+          }
+        }
+      ]
+    }
+  ]
+}
